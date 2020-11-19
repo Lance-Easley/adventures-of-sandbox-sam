@@ -4,9 +4,9 @@ from pprint import pprint
 
 class Player(object):
     def __init__(self, x, y, color, map_obj):
-        self.width = 52
+        self.width = 26
         self.x = x - self.width // 2
-        self.height = 82
+        self.height = 41
         self.y = y - self.height // 2
         self.color = color
         self.hitbox = pygame.Rect(self.x - 2, self.y - 2, self.width + 2, self.height + 2)
@@ -23,7 +23,7 @@ class Player(object):
 class Map(object):
     def __init__(self, world):
         self.x = 0
-        self.y = 0
+        self.y = 250
         self.width = 1600
         self.height = 1600
         self.x_vel = 5
@@ -45,7 +45,7 @@ class Map(object):
             x = 0
             for tile in layer:
                 if tile != '0':
-                    tile_rects.append(pygame.Rect(x*16,y*16,16,16))
+                    tile_rects.append(pygame.Rect(self.x + (x*16),self.y + (y*16),16,16))
                 x += 1
             y += 1
         return tile_rects
