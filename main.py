@@ -4,82 +4,135 @@ from pprint import pprint
 
 pygame.init()
 
-screen_x, screen_y = (1000,800)
-display = pygame.display.set_mode((screen_x, screen_y))
+WINDOW_SIZE = (1000,600)
 
-
-def collide_check(rect, colls):
-    collisions = []
-    for wall in colls:
-        if rect.colliderect(wall):
-            collisions.append(world.wall_objs().index(wall))
-    return collisions
-
-
-def redrawGameWindow():
-    world.draw_collision(display)
-    p1.draw(display)
-    pygame.display.update()
+screen = pygame.display.set_mode(WINDOW_SIZE,0,32) # initiate the window
+display = pygame.Surface((500,300)) # used as the surface for rendering, which is scaled
 
 
 #mainloop
-world = Map("world")
+moving_right = False
+moving_left = False
+vertical_momentum = 0
+air_timer = 0
+
+true_scroll = [0,0]
+
+def load_map(path):
+    f = open(path + '.txt','r')
+    data = f.read()
+    f.close()
+    data = data.split('\n')
+    game_map = []
+    for row in data:
+        game_map.append(list(row))
+    return game_map
+
+game_map = load_map('world')
+
+grass_img = pygame.image.load('grass.jpg')
+dirt_img = pygame.image.load('dirt.jpg')
+stone_img = pygame.image.load('stone.jpg')
+
+player_img = pygame.image.load('player.jpg').convert()
+player_img.set_colorkey((255,255,255))
+
+player_rect = pygame.Rect(100,100,12,30)
+
+def collision_test(rect,tiles):
+    hit_list = []
+    for tile in tiles:
+        if rect.colliderect(tile):
+            hit_list.append(tile)
+    return hit_list
+
+def move(rect,movement,tiles):
+    collision_types = {'top':False,'bottom':False,'right':False,'left':False}
+    rect.x += movement[0]
+    hit_list = collision_test(rect,tiles)
+    for tile in hit_list:
+        if movement[0] > 0:
+            rect.right = tile.left
+            collision_types['right'] = True
+        elif movement[0] < 0:
+            rect.left = tile.right
+            collision_types['left'] = True
+    rect.y += movement[1]
+    hit_list = collision_test(rect,tiles)
+    for tile in hit_list:
+        if movement[1] > 0:
+            rect.bottom = tile.top
+            collision_types['bottom'] = True
+        elif movement[1] < 0:
+            rect.top = tile.bottom
+            collision_types['top'] = True
+    return rect, collision_types
+
+
 clock = pygame.time.Clock()
-collision_tolerance = max(world.x_vel, world.y_vel) * 2 + 1
-p1 = Player(screen_x // 2, screen_y // 2, (255,0,0), world)
-gravity = 3
-run = True
-while run:
-    clock.tick(60)
+while True: # game loop
+    display.fill((146,244,255)) # clear screen by filling it with blue
 
-    display.fill((125,200,255))
+    true_scroll[0] += (player_rect.x-true_scroll[0]-152)/10
+    true_scroll[1] += (player_rect.y-true_scroll[1]-106)/10
+    scroll = true_scroll.copy()
+    scroll[0] = int(scroll[0])
+    scroll[1] = int(scroll[1])
 
-    w_coll = True
-    a_coll = True
-    s_coll = True
-    d_coll = True
+    tile_rects = []
+    y = 0
+    for layer in game_map:
+        x = 0
+        for tile in layer:
+            if tile == '1':
+                display.blit(grass_img,(x*16-scroll[0],y*16-scroll[1]))
+            if tile == '2':
+                display.blit(dirt_img,(x*16-scroll[0],y*16-scroll[1]))
+            if tile == '3':
+                display.blit(stone_img,(x*16-scroll[0],y*16-scroll[1]))
+            if tile != '0':
+                tile_rects.append(pygame.Rect(x*16,y*16,16,16))
+            x += 1
+        y += 1
 
-    redrawGameWindow()
-    # skeld.wall_objs()
+    player_movement = [0,0]
+    if moving_right == True:
+        player_movement[0] += 2
+    if moving_left == True:
+        player_movement[0] -= 2
+    player_movement[1] += vertical_momentum
+    vertical_momentum += 0.2
+    if vertical_momentum > 3:
+        vertical_momentum = 3
 
-    for event in pygame.event.get():
+    player_rect,collisions = move(player_rect,player_movement,tile_rects)
+
+    if collisions['bottom'] == True:
+        air_timer = 0
+        vertical_momentum = 0
+    else:
+        air_timer += 1
+
+    display.blit(player_img,(player_rect.x-scroll[0],player_rect.y-scroll[1]))
+
+
+    for event in pygame.event.get(): # event loop
         if event.type == pygame.QUIT:
-            run = False
-
-    keys = pygame.key.get_pressed()
-    
-    coll_index = collide_check(p1.hitbox, world.wall_objs())
-    if coll_index != []:
-        for i in coll_index:
-            if abs(world.wall_objs()[i].bottom - p1.hitbox.top) < collision_tolerance:
-                w_coll = False
-            if abs(world.wall_objs()[i].right - p1.hitbox.left) < collision_tolerance:
-                a_coll = False
-            if abs(world.wall_objs()[i].top - p1.hitbox.bottom) < collision_tolerance:
-                s_coll = False
-            if abs(world.wall_objs()[i].left - p1.hitbox.right) < collision_tolerance:
-                d_coll = False
-
-    if gravity < 3:
-        gravity += 0.2
-
-    if keys[pygame.K_a]:
-        if a_coll:
-            world.x += world.x_vel
-    if keys[pygame.K_d]:
-        if d_coll:
-            world.x -= world.x_vel
-    if keys[pygame.K_SPACE]:
-        if s_coll:
-            gravity = -3
-    if keys[pygame.K_c]:
-        print(world.x, world.y)
-
-    if s_coll:
-        world.y -= gravity
-
-    if keys[pygame.K_ESCAPE]:
-        display = pygame.display.set_mode((screen_x, screen_y))
-        run = False
-
-pygame.quit()
+            pygame.quit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                moving_right = True
+            if event.key == pygame.K_LEFT:
+                moving_left = True
+            if event.key == pygame.K_UP:
+                if air_timer < 6:
+                    vertical_momentum = -5
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_RIGHT:
+                moving_right = False
+            if event.key == pygame.K_LEFT:
+                moving_left = False
+        
+    screen.blit(pygame.transform.scale(display,WINDOW_SIZE),(0,0))
+    pygame.display.update()
+    clock.tick(60)
