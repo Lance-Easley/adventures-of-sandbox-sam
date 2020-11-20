@@ -70,7 +70,9 @@ def move(rect,movement,tiles):
 
 
 clock = pygame.time.Clock()
-while True: # game loop
+is_building = False
+run = True
+while run: # game loop
     display.fill((146,244,255)) # clear screen by filling it with blue
 
     true_scroll[0] += (player_rect.x-true_scroll[0]-152)/10
@@ -102,37 +104,58 @@ while True: # game loop
         player_movement[0] -= 2
     player_movement[1] += vertical_momentum
     vertical_momentum += 0.2
-    if vertical_momentum > 3:
-        vertical_momentum = 3
+    if vertical_momentum > 5:
+        vertical_momentum = 5
 
     player_rect,collisions = move(player_rect,player_movement,tile_rects)
 
     if collisions['bottom'] == True:
-        air_timer = 0
         vertical_momentum = 0
-    else:
-        air_timer += 1
+    if collisions['top'] == True:
+        vertical_momentum = 0
 
     display.blit(player_img,(player_rect.x-scroll[0],player_rect.y-scroll[1]))
 
 
     for event in pygame.event.get(): # event loop
         if event.type == pygame.QUIT:
-            pygame.quit()
+            run = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
+            if event.key == pygame.K_d:
                 moving_right = True
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_a:
                 moving_left = True
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_w:
                 if air_timer < 6:
-                    vertical_momentum = -5
+                    vertical_momentum = -3.2
+            if event.key == pygame.K_e:
+                is_building = not is_building
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_RIGHT:
+            if event.key == pygame.K_d:
                 moving_right = False
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_a:
                 moving_left = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            m_x = pos[0] / 32 + (true_scroll[0] / 16)
+            m_y = pos[1] / 32 + (true_scroll[1] / 16)
+            # print(m_x, m_y)
+            y = 0
+            for layer in game_map:
+                x = 0
+                for index, tile in enumerate(layer):
+                    if tile != '0':
+                        if (m_x > x and m_x < x + 1) and (m_y > y and m_y < y + 1):
+                            game_map[game_map.index(layer)][index] = '0'
+                    else:
+                        if (m_x > x and m_x < x + 1) and (m_y > y and m_y < y + 1):
+                            game_map[game_map.index(layer)][index] = '3'
+                    x += 1
+                y += 1
+
         
     screen.blit(pygame.transform.scale(display,WINDOW_SIZE),(0,0))
     pygame.display.update()
     clock.tick(60)
+
+pygame.quit()
