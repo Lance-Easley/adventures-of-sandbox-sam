@@ -14,6 +14,7 @@ moving_right = False
 moving_left = False
 vertical_momentum = 0
 air_timer = 0
+can_jump = False
 
 true_scroll = [0,0]
 
@@ -124,12 +125,14 @@ clock = pygame.time.Clock()
 is_building = False
 run = True
 while run: # game loop
-    display.fill((0,0,0)) # clear screen by filling it with blue (146,244,255)
+    display.fill((146,244,255)) # clear screen by filling it with blue (146,244,255)
 
     pos = pygame.mouse.get_pos()
     m_x = pos[0] / 32 + (true_scroll[0] / 16)
     m_y = pos[1] / 32 + (true_scroll[1] / 16)
-    # print(m_x, m_y)
+    player_rel_x = (pos[0] - (WINDOW_SIZE[0] // 2 + 24))
+    player_rel_y = (pos[1] - (WINDOW_SIZE[1] // 2 - 20))
+    # print(player_rel_x, player_rel_y)
 
     true_scroll[0] += (player_rect.x-true_scroll[0]-(WINDOW_SIZE[0] // 4 + 6))/10
     true_scroll[1] += (player_rect.y-true_scroll[1]-(WINDOW_SIZE[1] // 4 - 15))/10
@@ -205,9 +208,11 @@ while run: # game loop
 
 
     player_rect,collisions = move(player_rect,player_movement,tile_rects)
+    # print(player_rect.x, player_rect.y)
 
     if collisions['bottom'] == True:
         vertical_momentum = 0
+        can_jump = True
     if collisions['top'] == True:
         vertical_momentum = 0
 
@@ -229,8 +234,9 @@ while run: # game loop
             if event.key == pygame.K_a:
                 moving_left = True
             if event.key == pygame.K_SPACE:
-                if air_timer < 6:
+                if air_timer < 6 and can_jump:
                     vertical_momentum = -3.2
+                    can_jump = False
             if event.key == pygame.K_e:
                 is_building = not is_building
             if event.key == pygame.K_1:
@@ -252,30 +258,32 @@ while run: # game loop
             for layer in game_map:
                 x = 0
                 for index, tile in enumerate(layer):
-                    if not is_building:
-                        if tile != '0':
-                            if (m_x > x and m_x < x + 1) and (m_y > y and m_y < y + 1):
-                                block = game_map[game_map.index(layer)][index]
-                                if block == '1':
-                                    blocks['1'] += 1
-                                elif block == '2':
-                                    blocks['2'] += 1
-                                elif block == '3':
-                                    blocks['3'] += 1
-                                game_map[game_map.index(layer)][index] = '0'
-                    else:
-                        if tile == '0':
-                            if (m_x > x and m_x < x + 1) and (m_y > y and m_y < y + 1):
-                                if block_choice != '0' and blocks[block_choice] > 0:
-                                    game_map[game_map.index(layer)][index] = block_choice
-                                    if block_choice == '1':
-                                        blocks['1'] -= 1
-                                    elif block_choice == '2':
-                                        blocks['2'] -= 1
-                                    elif block_choice == '3':
-                                        blocks['3'] -= 1
-                    x += 1
-                y += 1    
+                    if int((abs(player_rel_x) ** 2 + abs(player_rel_y) ** 2) ** 0.5) <= 150:
+                        if not is_building:
+                            if tile != '0':
+                                if (m_x > x and m_x < x + 1) and (m_y > y and m_y < y + 1):
+                                    block = game_map[game_map.index(layer)][index]
+                                    if block == '1':
+                                        blocks['1'] += 1
+                                    elif block == '2':
+                                        blocks['2'] += 1
+                                    elif block == '3':
+                                        blocks['3'] += 1
+                                    game_map[game_map.index(layer)][index] = '0'
+                        else:
+                            if tile == '0':
+                                if (m_x > x and m_x < x + 1) and (m_y > y and m_y < y + 1):
+                                    if block_choice != '0' and blocks[block_choice] > 0:
+                                        game_map[game_map.index(layer)][index] = block_choice
+                                        if block_choice == '1':
+                                            blocks['1'] -= 1
+                                        elif block_choice == '2':
+                                            blocks['2'] -= 1
+                                        elif block_choice == '3':
+                                            blocks['3'] -= 1
+                        x += 1
+                y += 1
+    print(int((abs(player_rel_x) ** 2 + abs(player_rel_y) ** 2) ** 0.5))
 
     screen.blit(pygame.transform.scale(display,WINDOW_SIZE),(0,0))
 
