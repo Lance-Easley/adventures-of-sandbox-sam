@@ -55,4 +55,4 @@ class Map(object):
             pygame.draw.rect(window, (0,255,0), wall, 1)
 
 if __name__ == "__main__":
-    Map("world")
+    print(Map("world").world_data)
