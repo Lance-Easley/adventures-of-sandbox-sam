@@ -29,24 +29,24 @@ def load_map(path):
 
 game_map = load_map('world')
 
-grass_img = pygame.image.load('grass.jpg')
-dirt_img = pygame.image.load('dirt.jpg')
-stone_img = pygame.image.load('stone.jpg')
+grass_img = pygame.image.load('items/grass.jpg')
+dirt_img = pygame.image.load('items/dirt.jpg')
+stone_img = pygame.image.load('items/stone.jpg')
 
 
-mining_img = pygame.image.load('pickaxe.jpg').convert()
+mining_img = pygame.image.load('items/pickaxe.jpg').convert()
 mining_img.set_colorkey((255,255,255))
 
-building_img = pygame.image.load('place.jpg').convert()
+building_img = pygame.image.load('items/place.jpg').convert()
 building_img.set_colorkey((255,255,255))
 
-inv_img = pygame.image.load('inventory.jpg').convert()
+inv_img = pygame.image.load('inventory/inventory.jpg').convert()
 inv_img.set_colorkey((255,255,255))
 
-inv_select = pygame.image.load('select.jpg').convert()
+inv_select = pygame.image.load('inventory/select.jpg').convert()
 inv_select.set_colorkey((255,255,255))
 
-player_img = pygame.image.load('player.jpg').convert()
+player_img = pygame.image.load('player/player.jpg').convert()
 player_img.set_colorkey((255,255,255))
 
 player_rect = pygame.Rect(0,100,12,30)
