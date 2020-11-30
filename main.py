@@ -67,6 +67,11 @@ game_map = load_map('world')
 grass_img = pygame.image.load('items/grass.jpg')
 dirt_img = pygame.image.load('items/dirt.jpg')
 stone_img = pygame.image.load('items/stone.jpg')
+coal_img = pygame.image.load('items/coal.jpg')
+iron_img = pygame.image.load('items/iron.jpg')
+ruby_img = pygame.image.load('items/ruby.jpg')
+uranium_img = pygame.image.load('items/uranium.jpg')
+diamond_img = pygame.image.load('items/diamond.jpg')
 
 
 mining_img = pygame.image.load('items/pickaxe.jpg').convert()
@@ -118,7 +123,9 @@ def move(rect,movement,tiles):
             collision_types['top'] = True
     return rect, collision_types
 
-blocks = {'1': 0, '2': 0, '3': 0}
+blocks = {'grass': 0, 'dirt': 0, 'stone': 0, 'coal': 0, 'iron': 0, 'ruby': 0, 'uranium': 0, 'diamond': 0, 'wood': 0}
+hotbar = {'s1': None, 's2': None, 's3': None, 's4': None, 's5': None, 's6': None, 's7': None, 's8': None, 's9': None}
+hb_positions = {'s1': 166, 's2': 186, 's3': 206, 's4': 226, 's5': 246, 's6': 266, 's7': 286, 's8': 306, 's9': 326}
 block_choice = '0'
 
 clock = pygame.time.Clock()
@@ -151,6 +158,16 @@ while run: # game loop
                 display.blit(dirt_img,(x*16-scroll[0],y*16-scroll[1]))
             if tile == '3':
                 display.blit(stone_img,(x*16-scroll[0],y*16-scroll[1]))
+            if tile == '4':
+                display.blit(coal_img,(x*16-scroll[0],y*16-scroll[1]))
+            if tile == '5':
+                display.blit(iron_img,(x*16-scroll[0],y*16-scroll[1]))
+            if tile == '6':
+                display.blit(ruby_img,(x*16-scroll[0],y*16-scroll[1]))
+            if tile == '7':
+                display.blit(uranium_img,(x*16-scroll[0],y*16-scroll[1]))
+            if tile == '8':
+                display.blit(diamond_img,(x*16-scroll[0],y*16-scroll[1]))
             if tile != '0':
                 tile_rects.append(pygame.Rect(x*16,y*16,16,16))
             x += 1
@@ -161,29 +178,89 @@ while run: # game loop
     if not is_building:
         display.blit(mining_img,((pos[0] // 2 + 10, pos[1] // 2 + 10)))
 
-    grass_text = font.render(f"{blocks['1']}", True, (255,255,0))
-    grass_textRect = grass_text.get_rect()
-    grass_textRect.topleft = (472, 508)
+    # slot1_text = font.render(f"{blocks['1'][1]}", True, (255,255,0))
+    # slot1_textRect = slot1_text.get_rect()
+    # slot1_textRect.topleft = (472, 508)
 
-    dirt_text = font.render(f"{blocks['2']}", True, (255,255,0))
-    dirt_textRect = dirt_text.get_rect()
-    dirt_textRect.topleft = (512, 508)
+    # slot2_text = font.render(f"{blocks['2'][1]}", True, (255,255,0))
+    # slot2_textRect = slot2_text.get_rect()
+    # slot2_textRect.topleft = (512, 508)
 
-    stone_text = font.render(f"{blocks['3']}", True, (255,255,0))
-    stone_textRect = stone_text.get_rect()
-    stone_textRect.topleft = (552, 508) # add 40 to x value for each new block
+    # slot3_text = font.render(f"{blocks['3'][1]}", True, (255,255,0))
+    # slot3_textRect = slot3_text.get_rect()
+    # slot3_textRect.topleft = (552, 508)
 
-    display.blit(inv_img,((WINDOW_SIZE[0] // 4 - 19, 250))) # hotbar
-    display.blit(grass_img,((235, 254)))
-    display.blit(dirt_img,((255, 254)))
-    display.blit(stone_img,((275, 254)))
+    # slot4_text = font.render(f"{blocks['4'][1]}", True, (255,255,0))
+    # slot4_textRect = slot4_text.get_rect()
+    # slot4_textRect.topleft = (592, 508)
+
+    # slot5_text = font.render(f"{blocks['5'][1]}", True, (255,255,0))
+    # slot5_textRect = slot5_text.get_rect()
+    # slot5_textRect.topleft = (642, 508)
+
+    # slot6_text = font.render(f"{blocks['6'][1]}", True, (255,255,0))
+    # slot6_textRect = slot6_text.get_rect()
+    # slot6_textRect.topleft = (692, 508)
+
+    # slot7_text = font.render(f"{blocks['7'][1]}", True, (255,255,0))
+    # slot7_textRect = slot7_text.get_rect()
+    # slot7_textRect.topleft = (742, 508)
+
+    # slot8_text = font.render(f"{blocks['8'][1]}", True, (255,255,0))
+    # slot8_textRect = slot8_text.get_rect()
+    # slot8_textRect.topleft = (792, 508)
+
+    # slot9_text = font.render(f"{blocks['9'][1]}", True, (255,255,0))
+    # slot9_textRect = slot9_text.get_rect()
+    # slot9_textRect.topleft = (792, 508) # add 40 to x value for each new block
+
+    display.blit(inv_img,((WINDOW_SIZE[0] // 4 - 88, 250))) # hotbar
+
+    for key, value in hotbar.items():
+        if 'grass' == value:
+            display.blit(grass_img,((hb_positions[key], 254)))
+        if 'dirt' == value:
+            display.blit(dirt_img,((hb_positions[key], 254)))
+        if 'stone' == value:
+            display.blit(stone_img,((hb_positions[key], 254)))
+        if 'coal' == value:
+            display.blit(coal_img,((hb_positions[key], 254)))
+        if 'iron' == value:
+            display.blit(iron_img,((hb_positions[key], 254)))
+        if 'ruby' == value:
+            display.blit(ruby_img,((hb_positions[key], 254)))
+        if 'uranium' == value:
+            display.blit(uranium_img,((hb_positions[key], 254)))
+        if 'diamond' == value:
+            display.blit(diamond_img,((hb_positions[key], 254)))
+    
+    # display.blit(grass_img,((186, 254)))
+    # display.blit(dirt_img,((206, 254)))
+    # display.blit(stone_img,((226, 254)))
+    # display.blit(coal_img,((246, 254)))
+    # display.blit(iron_img,((266, 254)))
+    # display.blit(ruby_img,((286, 254)))
+    # display.blit(uranium_img,((306, 254)))
+    # display.blit(diamond_img,((326, 254)))
 
     if block_choice == '1':
-        display.blit(inv_select,((232, 251)))
-    if block_choice == '2':
-        display.blit(inv_select,((252, 251)))
-    if block_choice == '3':
-        display.blit(inv_select,((272, 251)))
+        display.blit(inv_select,((163, 251)))
+    elif block_choice == '2':
+        display.blit(inv_select,((183, 251)))
+    elif block_choice == '3':
+        display.blit(inv_select,((203, 251)))
+    elif block_choice == '4':
+        display.blit(inv_select,((223, 251)))
+    elif block_choice == '5':
+        display.blit(inv_select,((243, 251)))
+    elif block_choice == '6':
+        display.blit(inv_select,((263, 251)))
+    elif block_choice == '7':
+        display.blit(inv_select,((283, 251)))
+    elif block_choice == '8':
+        display.blit(inv_select,((303, 251)))
+    elif block_choice == '9':
+        display.blit(inv_select,((323, 251)))
 
 
     player_movement = [0,0]
@@ -248,6 +325,24 @@ while run: # game loop
             if event.key == pygame.K_3:
                 block_choice = '3'
                 is_building = True
+            if event.key == pygame.K_4:
+                block_choice = '4'
+                is_building = True
+            if event.key == pygame.K_5:
+                block_choice = '5'
+                is_building = True
+            if event.key == pygame.K_6:
+                block_choice = '6'
+                is_building = True
+            if event.key == pygame.K_7:
+                block_choice = '7'
+                is_building = True
+            if event.key == pygame.K_8:
+                block_choice = '8'
+                is_building = True
+            if event.key == pygame.K_9:
+                block_choice = '9'
+                is_building = True
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_d:
                 moving_right = False
@@ -264,11 +359,23 @@ while run: # game loop
                                 if (m_x > x and m_x < x + 1) and (m_y > y and m_y < y + 1):
                                     block = game_map[game_map.index(layer)][index]
                                     if block == '1':
-                                        blocks['1'] += 1
+                                        blocks['grass'] += 1
                                     elif block == '2':
-                                        blocks['2'] += 1
+                                        blocks['dirt'] += 1
                                     elif block == '3':
-                                        blocks['3'] += 1
+                                        blocks['stone'] += 1
+                                    elif block == '4':
+                                        blocks['coal'] += 1
+                                    elif block == '5':
+                                        blocks['iron'] += 1
+                                    elif block == '6':
+                                        blocks['ruby'] += 1
+                                    elif block == '7':
+                                        blocks['uranium'] += 1
+                                    elif block == '8':
+                                        blocks['diamond'] += 1
+                                    elif block == '9':
+                                        blocks['wood'] += 1
                                     game_map[game_map.index(layer)][index] = '0'
                         else:
                             if tile == '0':
@@ -281,15 +388,41 @@ while run: # game loop
                                             blocks['2'] -= 1
                                         elif block_choice == '3':
                                             blocks['3'] -= 1
+                                        elif block_choice == '4':
+                                            blocks['4'] -= 1
+                                        elif block_choice == '5':
+                                            blocks['5'] -= 1
+                                        elif block_choice == '6':
+                                            blocks['6'] -= 1
+                                        elif block_choice == '7':
+                                            blocks['7'] -= 1
+                                        elif block_choice == '8':
+                                            blocks['8'] -= 1
+                                        elif block_choice == '9':
+                                            blocks['9'] -= 1
                         x += 1
                 y += 1
-    print(int((abs(player_rel_x) ** 2 + abs(player_rel_y) ** 2) ** 0.5))
+    
+    # print(int((abs(player_rel_x) ** 2 + abs(player_rel_y) ** 2) ** 0.5))
+
+    for key in blocks:
+        if blocks[key] > 0 and key not in hotbar.values():
+            for h_key, value in hotbar.items():
+                if value == None:
+                    hotbar[h_key] = key
+                    break
+        elif blocks[key] == 0 and blocks[key] in hotbar.values():
+            for h_key, value in hotbar.items():
+                if value == blocks[key]:
+                    hotbar[h_key] = None
+    
+    print(hotbar)
 
     screen.blit(pygame.transform.scale(display,WINDOW_SIZE),(0,0))
 
-    screen.blit(grass_text, grass_textRect)
-    screen.blit(dirt_text, dirt_textRect)
-    screen.blit(stone_text, stone_textRect)
+    # screen.blit(grass_text, grass_textRect)
+    # screen.blit(dirt_text, dirt_textRect)
+    # screen.blit(stone_text, stone_textRect)
     
     pygame.display.update()
     clock.tick(60)
