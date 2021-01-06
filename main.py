@@ -1,5 +1,5 @@
 import pygame
-from classes import Player, Map
+# from classes import Player, Map
 from pprint import pprint
 
 pygame.init()
@@ -123,10 +123,11 @@ def move(rect,movement,tiles):
             collision_types['top'] = True
     return rect, collision_types
 
-blocks = {'grass': 0, 'dirt': 0, 'stone': 0, 'coal': 0, 'iron': 0, 'ruby': 0, 'uranium': 0, 'diamond': 0, 'wood': 0}
+block_ids = {'air': '0', 'grass': '1', 'dirt': '2', 'stone': '3', 'coal': '4', 'iron': '5', 'ruby': '6', 'uranium': '7', 'diamond': '8', 'wood': '9'}
+blocks = {'grass': 0, 'dirt': 0, 'stone': 1000, 'coal': 0, 'iron': 0, 'ruby': 0, 'uranium': 0, 'diamond': 0, 'wood': 0}
 hotbar = {'s1': None, 's2': None, 's3': None, 's4': None, 's5': None, 's6': None, 's7': None, 's8': None, 's9': None}
 hb_positions = {'s1': 166, 's2': 186, 's3': 206, 's4': 226, 's5': 246, 's6': 266, 's7': 286, 's8': 306, 's9': 326}
-block_choice = '0'
+block_choice = 's0'
 
 clock = pygame.time.Clock()
 is_building = False
@@ -141,8 +142,8 @@ while run: # game loop
     player_rel_y = (pos[1] - (WINDOW_SIZE[1] // 2 - 20))
     # print(player_rel_x, player_rel_y)
 
-    true_scroll[0] += (player_rect.x-true_scroll[0]-(WINDOW_SIZE[0] // 4 + 6))/10
-    true_scroll[1] += (player_rect.y-true_scroll[1]-(WINDOW_SIZE[1] // 4 - 15))/10
+    true_scroll[0] += (player_rect.x-true_scroll[0]-(WINDOW_SIZE[0] // 4 + 6))/5
+    true_scroll[1] += (player_rect.y-true_scroll[1]-(WINDOW_SIZE[1] // 4 - 15))/5
     scroll = true_scroll.copy()
     scroll[0] = int(scroll[0])
     scroll[1] = int(scroll[1])
@@ -243,23 +244,23 @@ while run: # game loop
     # display.blit(uranium_img,((306, 254)))
     # display.blit(diamond_img,((326, 254)))
 
-    if block_choice == '1':
+    if block_choice == 's1':
         display.blit(inv_select,((163, 251)))
-    elif block_choice == '2':
+    elif block_choice == 's2':
         display.blit(inv_select,((183, 251)))
-    elif block_choice == '3':
+    elif block_choice == 's3':
         display.blit(inv_select,((203, 251)))
-    elif block_choice == '4':
+    elif block_choice == 's4':
         display.blit(inv_select,((223, 251)))
-    elif block_choice == '5':
+    elif block_choice == 's5':
         display.blit(inv_select,((243, 251)))
-    elif block_choice == '6':
+    elif block_choice == 's6':
         display.blit(inv_select,((263, 251)))
-    elif block_choice == '7':
+    elif block_choice == 's7':
         display.blit(inv_select,((283, 251)))
-    elif block_choice == '8':
+    elif block_choice == 's8':
         display.blit(inv_select,((303, 251)))
-    elif block_choice == '9':
+    elif block_choice == 'sdd9':
         display.blit(inv_select,((323, 251)))
 
 
@@ -317,31 +318,31 @@ while run: # game loop
             if event.key == pygame.K_e:
                 is_building = not is_building
             if event.key == pygame.K_1:
-                block_choice = '1'
+                block_choice = 's1'
                 is_building = True
             if event.key == pygame.K_2:
-                block_choice = '2'
+                block_choice = 's2'
                 is_building = True
             if event.key == pygame.K_3:
-                block_choice = '3'
+                block_choice = 's3'
                 is_building = True
             if event.key == pygame.K_4:
-                block_choice = '4'
+                block_choice = 's4'
                 is_building = True
             if event.key == pygame.K_5:
-                block_choice = '5'
+                block_choice = 's5'
                 is_building = True
             if event.key == pygame.K_6:
-                block_choice = '6'
+                block_choice = 's6'
                 is_building = True
             if event.key == pygame.K_7:
-                block_choice = '7'
+                block_choice = 's7'
                 is_building = True
             if event.key == pygame.K_8:
-                block_choice = '8'
+                block_choice = 's8'
                 is_building = True
             if event.key == pygame.K_9:
-                block_choice = '9'
+                block_choice = 's9'
                 is_building = True
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_d:
@@ -380,26 +381,11 @@ while run: # game loop
                         else:
                             if tile == '0':
                                 if (m_x > x and m_x < x + 1) and (m_y > y and m_y < y + 1):
-                                    if block_choice != '0' and blocks[block_choice] > 0:
-                                        game_map[game_map.index(layer)][index] = block_choice
-                                        if block_choice == '1':
-                                            blocks['1'] -= 1
-                                        elif block_choice == '2':
-                                            blocks['2'] -= 1
-                                        elif block_choice == '3':
-                                            blocks['3'] -= 1
-                                        elif block_choice == '4':
-                                            blocks['4'] -= 1
-                                        elif block_choice == '5':
-                                            blocks['5'] -= 1
-                                        elif block_choice == '6':
-                                            blocks['6'] -= 1
-                                        elif block_choice == '7':
-                                            blocks['7'] -= 1
-                                        elif block_choice == '8':
-                                            blocks['8'] -= 1
-                                        elif block_choice == '9':
-                                            blocks['9'] -= 1
+                                    if block_choice != 's0' and hotbar[block_choice] != None and blocks[hotbar[block_choice]] > 0:
+                                        game_map[game_map.index(layer)][index] = block_ids[hotbar[block_choice]]
+                                        blocks[hotbar[block_choice]] -= 1
+                                        if blocks[hotbar[block_choice]] == 0:
+                                            hotbar[block_choice] = None
                         x += 1
                 y += 1
     
@@ -416,13 +402,9 @@ while run: # game loop
                 if value == blocks[key]:
                     hotbar[h_key] = None
     
-    print(hotbar)
+    # print(hotbar)
 
     screen.blit(pygame.transform.scale(display,WINDOW_SIZE),(0,0))
-
-    # screen.blit(grass_text, grass_textRect)
-    # screen.blit(dirt_text, dirt_textRect)
-    # screen.blit(stone_text, stone_textRect)
     
     pygame.display.update()
     clock.tick(60)
