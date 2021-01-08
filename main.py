@@ -72,6 +72,7 @@ iron_img = pygame.image.load('items/iron.jpg')
 ruby_img = pygame.image.load('items/ruby.jpg')
 uranium_img = pygame.image.load('items/uranium.jpg')
 diamond_img = pygame.image.load('items/diamond.jpg')
+wood_img = pygame.image.load('items/wood.jpg')
 
 
 mining_img = pygame.image.load('items/pickaxe.jpg').convert()
@@ -124,7 +125,7 @@ def move(rect,movement,tiles):
     return rect, collision_types
 
 block_ids = {'air': '0', 'grass': '1', 'dirt': '2', 'stone': '3', 'coal': '4', 'iron': '5', 'ruby': '6', 'uranium': '7', 'diamond': '8', 'wood': '9'}
-blocks = {'grass': 0, 'dirt': 0, 'stone': 1000, 'coal': 0, 'iron': 0, 'ruby': 0, 'uranium': 0, 'diamond': 0, 'wood': 0}
+blocks = {'grass': 0, 'dirt': 0, 'stone': 0, 'coal': 0, 'iron': 0, 'ruby': 0, 'uranium': 0, 'diamond': 0, 'wood': 0}
 hotbar = {'s1': None, 's2': None, 's3': None, 's4': None, 's5': None, 's6': None, 's7': None, 's8': None, 's9': None}
 hb_positions = {'s1': 166, 's2': 186, 's3': 206, 's4': 226, 's5': 246, 's6': 266, 's7': 286, 's8': 306, 's9': 326}
 block_choice = 's0'
@@ -169,6 +170,8 @@ while run: # game loop
                 display.blit(uranium_img,(x*16-scroll[0],y*16-scroll[1]))
             if tile == '8':
                 display.blit(diamond_img,(x*16-scroll[0],y*16-scroll[1]))
+            if tile == '9':
+                display.blit(wood_img,(x*16-scroll[0],y*16-scroll[1]))
             if tile != '0':
                 tile_rects.append(pygame.Rect(x*16,y*16,16,16))
             x += 1
@@ -179,41 +182,72 @@ while run: # game loop
     if not is_building:
         display.blit(mining_img,((pos[0] // 2 + 10, pos[1] // 2 + 10)))
 
-    # slot1_text = font.render(f"{blocks['1'][1]}", True, (255,255,0))
-    # slot1_textRect = slot1_text.get_rect()
-    # slot1_textRect.topleft = (472, 508)
+    # Hotbar Numbers
 
-    # slot2_text = font.render(f"{blocks['2'][1]}", True, (255,255,0))
-    # slot2_textRect = slot2_text.get_rect()
-    # slot2_textRect.topleft = (512, 508)
+    if hotbar['s1'] != None:
+        slot1_text = font.render(f"{blocks[hotbar['s1']]}", True, (255,255,0))
+    else:
+        slot1_text = font.render(" ", True, (255,255,0))
+    slot1_textRect = slot1_text.get_rect()
+    slot1_textRect.topleft = (333, 508)
 
-    # slot3_text = font.render(f"{blocks['3'][1]}", True, (255,255,0))
-    # slot3_textRect = slot3_text.get_rect()
-    # slot3_textRect.topleft = (552, 508)
+    if hotbar['s2'] != None:
+        slot2_text = font.render(f"{blocks[hotbar['s2']]}", True, (255,255,0))
+    else:
+        slot2_text = font.render(" ", True, (255,255,0))
+    slot2_textRect = slot2_text.get_rect()
+    slot2_textRect.topleft = (373, 508)
 
-    # slot4_text = font.render(f"{blocks['4'][1]}", True, (255,255,0))
-    # slot4_textRect = slot4_text.get_rect()
-    # slot4_textRect.topleft = (592, 508)
+    if hotbar['s3'] != None:
+        slot3_text = font.render(f"{blocks[hotbar['s3']]}", True, (255,255,0))
+    else:
+        slot3_text = font.render(" ", True, (255,255,0))
+    slot3_textRect = slot3_text.get_rect()
+    slot3_textRect.topleft = (413, 508)
 
-    # slot5_text = font.render(f"{blocks['5'][1]}", True, (255,255,0))
-    # slot5_textRect = slot5_text.get_rect()
-    # slot5_textRect.topleft = (642, 508)
+    if hotbar['s4'] != None:
+        slot4_text = font.render(f"{blocks[hotbar['s4']]}", True, (255,255,0))
+    else:
+        slot4_text = font.render(" ", True, (255,255,0))
+    slot4_textRect = slot4_text.get_rect()
+    slot4_textRect.topleft = (453, 508)
 
-    # slot6_text = font.render(f"{blocks['6'][1]}", True, (255,255,0))
-    # slot6_textRect = slot6_text.get_rect()
-    # slot6_textRect.topleft = (692, 508)
+    if hotbar['s5'] != None:
+        slot5_text = font.render(f"{blocks[hotbar['s5']]}", True, (255,255,0))
+    else:
+        slot5_text = font.render(" ", True, (255,255,0))
+    slot5_textRect = slot5_text.get_rect()
+    slot5_textRect.topleft = (493, 508)
 
-    # slot7_text = font.render(f"{blocks['7'][1]}", True, (255,255,0))
-    # slot7_textRect = slot7_text.get_rect()
-    # slot7_textRect.topleft = (742, 508)
+    if hotbar['s6'] != None:
+        slot6_text = font.render(f"{blocks[hotbar['s6']]}", True, (255,255,0))
+    else:
+        slot6_text = font.render(" ", True, (255,255,0))
+    slot6_textRect = slot6_text.get_rect()
+    slot6_textRect.topleft = (533, 508)
 
-    # slot8_text = font.render(f"{blocks['8'][1]}", True, (255,255,0))
-    # slot8_textRect = slot8_text.get_rect()
-    # slot8_textRect.topleft = (792, 508)
+    if hotbar['s7'] != None:
+        slot7_text = font.render(f"{blocks[hotbar['s7']]}", True, (255,255,0))
+    else:
+        slot7_text = font.render(" ", True, (255,255,0))
+    slot7_textRect = slot7_text.get_rect()
+    slot7_textRect.topleft = (573, 508)
 
-    # slot9_text = font.render(f"{blocks['9'][1]}", True, (255,255,0))
-    # slot9_textRect = slot9_text.get_rect()
-    # slot9_textRect.topleft = (792, 508) # add 40 to x value for each new block
+    if hotbar['s8'] != None:
+        slot8_text = font.render(f"{blocks[hotbar['s8']]}", True, (255,255,0))
+    else:
+        slot8_text = font.render(" ", True, (255,255,0))
+    slot8_textRect = slot8_text.get_rect()
+    slot8_textRect.topleft = (613, 508)
+
+    if hotbar['s9'] != None:
+        slot9_text = font.render(f"{blocks[hotbar['s9']]}", True, (255,255,0))
+    else:
+        slot9_text = font.render(" ", True, (255,255,0))
+    slot9_textRect = slot9_text.get_rect()
+    slot9_textRect.topleft = (653, 508) # add 40 to x value for each new block
+
+
 
     display.blit(inv_img,((WINDOW_SIZE[0] // 4 - 88, 250))) # hotbar
 
@@ -234,6 +268,8 @@ while run: # game loop
             display.blit(uranium_img,((hb_positions[key], 254)))
         if 'diamond' == value:
             display.blit(diamond_img,((hb_positions[key], 254)))
+        if 'wood' == value:
+            display.blit(wood_img,((hb_positions[key], 254)))
     
     # display.blit(grass_img,((186, 254)))
     # display.blit(dirt_img,((206, 254)))
@@ -388,6 +424,7 @@ while run: # game loop
                                             hotbar[block_choice] = None
                         x += 1
                 y += 1
+            
     
     # print(int((abs(player_rel_x) ** 2 + abs(player_rel_y) ** 2) ** 0.5))
 
@@ -405,6 +442,16 @@ while run: # game loop
     # print(hotbar)
 
     screen.blit(pygame.transform.scale(display,WINDOW_SIZE),(0,0))
+
+    screen.blit(slot1_text, slot1_textRect)
+    screen.blit(slot2_text, slot2_textRect)
+    screen.blit(slot3_text, slot3_textRect)
+    screen.blit(slot4_text, slot4_textRect)
+    screen.blit(slot5_text, slot5_textRect)
+    screen.blit(slot6_text, slot6_textRect)
+    screen.blit(slot7_text, slot7_textRect)
+    screen.blit(slot8_text, slot8_textRect)
+    screen.blit(slot9_text, slot9_textRect)
     
     pygame.display.update()
     clock.tick(60)
